@@ -1,0 +1,57 @@
+Задание1.
+a) создать пользователя user1, указав shell /bin/bash и создав домашний каталог, используя утилиту useradd;
+sudo useradd -m -s /bin/bash user1
+
+b) создать пользователя user2, указав shell /bin/bash и создав домашний каталог, используя утилиту используя утилиту adduser;
+sudo adduser user2
+Отвечаем на все вопросы, задаем пароль. shell /bin/bash добавляется по умолчанию.
+
+c) удалить пользователя user1 вместе с домашним каталогом, используя утилиту userdel;
+sudo userdel -r user1
+Вывод: userdel: user1 mail spool (/var/mail/user1) not found
+Проверяю через sudo cat /etc/passwd, пользователя user1 нет.
+
+d) создать пользователя user1, указав основную группу user2
+sudo useradd -m -s /bin/bash -g user2 user1
+
+d) сменить пароль user1 одного из созданных пользователей, используя passwd
+sudo passwd user1
+New password: вводим пароль
+Retype new password: вводим идентичный пароль
+Вывод: passwd: password updated successfully
+
+e) сменить пароль user2 одного из созданных пользователей, используя usermod
+sudo usermod -p $(openssl passwd -6 ___ желаемый пароль) user2
+
+Задание2.
+a) создать группы group1, group2 с использованием groupadd;
+sudo groupadd group1
+sudo groupadd group2
+
+b) добавить user1 в группы group1, group2 разом при помощи одной команды usermod, не меняя его основной группы;
+sudo usermod -aG group1,group2 user1
+
+с) создать группу user1 с GID=1516 и сделать ее основной для пользователя user1
+создаем группу:
+sudo groupadd -g 1516 user1
+Проверяем: sudo cat /etc/group
+в конце списка появилось: user1:x:1516:
+Делаем группу user1 основной для пользователя user1:
+sudo usermod -g user1 user1
+
+Задание3.
+Создать пользователя с правами суперпользователя. Сделать так, чтобы sudo не требовал пароль для выполнения команд.
+Создаем нового пользователя с домашним каталогом и паролем:
+sudo useradd -m -s /bin/bash -p $(openssl passwd -6 superuser) superuser
+
+добавляем созданного пользователя в группу sudo: 
+sudo usermod -aG sudo superuser
+пользователь имеет права суперпользователя.
+
+Чтобы сделать так, чтобы sudo не требовал пароль: 
+открываем sudo visudo
+дописываем последней строкой 
+superuser  ALL=(ALL:ALL) NOPASSWD:ALL
+Сохраняем, закрываем. Проверяем, пароль при выполнении команды sudo не требуется.
+
+
