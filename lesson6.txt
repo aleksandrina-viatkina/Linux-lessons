@@ -1,0 +1,33 @@
+#! /bin/bash
+
+usage(){
+    cat << EOF
+This is a sed wrapper
+Usage: $0 [file(s)] [options(s)]
+Options:
+    $0 --help
+    $0 filename - удаление пустых строк и замена строчных букв заглавными - выв>
+    $0 filename -w or --write -удаление пустых строк и замена строчных букв заг>
+EOF
+  sed --help | head -n -9 | tail -n +2 
+}
+
+while [[ $# -gt 0 ]] ; do
+      [[ -f $1 ]] && FILES+=($1) && shift && continue
+
+      case $1 in
+           --help)
+           usage  
+           exit 0
+       ;;
+       -w | --write)
+           sed -i '/^$/d; s/[a-z]/\U&/g' ${FILES[@]}
+           shift
+       ;;
+       esac
+done
+
+(${#FILES[@]} == 0 ))&& echo "Files not specified" && exit 1
+
+sed 's/ //g; /^$/d; s/[a-z]/\U&/g' ${FILES[@]} 
+
