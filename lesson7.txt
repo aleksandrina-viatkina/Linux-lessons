@@ -1,0 +1,64 @@
+1. Подключить репозиторий с docker любым удобным способом, 
+установить nginx используя утилиту apt потом удалить nginx, используя утилиту dpkg.
+
+Установка репозитория с docker (по инструкции на сайте):
+sudo apt-get update
+sudo apt-get install
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo apt-key fingerprint 0EBFCD88
+lsb_release -cs
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+Установка nginx
+sudo apt update
+sudo apt install nginx
+
+Удаление nginx
+sudo dpkg -r nginx
+
+2. Установить nginx. Создать два виртуальных хоста, причем оба из них работают на порту 80. 
+При указании хедера Host: host2 - ответ с текстом This is host 2 со статусом 200.
+
+Установка nginx
+sudo apt install nginx
+
+Хост 1
+В директории с файлом default: /etc/nginx/sites-enabled nano host1.conf
+
+server {
+       listen      80;
+       server_name mysite1;
+
+       location / {
+               return 200 "This is HOST 1";
+      }
+}
+
+Проверка синтаксиса - sudo nginx -t
+Все корректно.
+
+Хост 2
+В директории с файлом default:/etc/nginx/sites-enabled nano host2.conf
+server {
+       listen      80;
+       server_name mysite2;
+
+       location / {
+               return 200 "This is HOST 2";
+      }
+}
+
+Проверка синтаксиса - sudo nginx -t
+Все корректно.
+
+Перезапуск sudo systemctl restart nginx
+
+aviatkina@ubuntu-linux:/etc/nginx/sites-enabled$ curl http://localhost -H 'Host: host1'
+Вывод: This is HOST 1aviatkina@ubuntu-linux:/etc/nginx/sites-enabled$ 
+
+aviatkina@ubuntu-linux:/etc/nginx/sites-enabled$ curl http://localhost -H 'Host: host2'
+Вывод: This is HOST 2aviatkina@ubuntu-linux:/etc/nginx/sites-enabled$ 
